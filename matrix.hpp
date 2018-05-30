@@ -68,6 +68,7 @@ public:
     }
     return tM;
   }
+
   matrix &operator=(const matrix &y)
   {
     this->~matrix();
@@ -186,6 +187,21 @@ public:
       for (size_t l = 0; l < j; l++)
       {
         _matrix[k][l] = 0;
+      }
+    }
+  }
+  matrix(const matrix &m)
+  {
+    _numColumns = m._numColumns, _numRows = m._numRows;
+    _matrix = new double *[m._numRows];
+
+    for (size_t i = 0; i < m._numRows; i++)
+    {
+      _matrix[i] = new double[m._numColumns];
+
+      for (size_t j = 0; j < m._numColumns; j++)
+      {
+        _matrix[i][j] = m._matrix[i][j];
       }
     }
   }
