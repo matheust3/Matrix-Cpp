@@ -5,6 +5,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <exception>
+#include <math.h>
 
 class MatrixException : public std::exception
 {
@@ -30,93 +31,133 @@ private:
   double **_matrix;
 
 public:
-  void show();
-  matrix operator*(const matrix &x);
-  template <typename T, std::size_t N, std::size_t M>
-  matrix(T (&a)[N][M]);
-  matrix(std::initializer_list<std::initializer_list<double>> j);
-  ~matrix();
-};
-matrix matrix::operator*(const matrix &x)
-{
-  if (this->_numColumns != x._numRows)
+  void show()
   {
-    throw new MatrixException("The number of columns of the first matrix is different from the number of lines of the second");
-  }
-  matrix p = *this;
-  p._numColumns = x._numColumns;
-  p._matrix = new double *[this->_numRows];
-  for (size_t i = 0; i < this->_numRows; i++)
-  {
-    p._matrix[i] = new double[x._numColumns];
-    for (size_t j = 0; j < x._numColumns; j++)
+
+    for (unsigned int i = 0; i < _numRows; i++)
     {
-      p._matrix[i][j] = 0;
-      for (size_t k = 0; k < x._numRows; k++)
+      std::cout << "[ ";
+      for (unsigned int j = 0; j < _numColumns; j++)
       {
-        p._matrix[i][j] += this->_matrix[i][k] * x._matrix[k][j];
+        std::cout << _matrix[i][j] << " ";
+      }
+      std::cout << "]" << std::endl;
+    }
+  }
+  matrix static TanH(const matrix &m)
+  {
+    matrix tM;
+    tM._numRows = m._numRows, tM._numColumns = m._numColumns;
+    tM._matrix = new double *[m._numRows];
+
+    for (size_t i = 0; i < m._numRows; i++)
+    {
+      tM._matrix[i] = new double[m._numColumns];
+      for (size_t j = 0; j < m._numColumns; j++)
+      {
+        tM._matrix[i][j] = (1 - exp(-2 * m._matrix[i][j])) / (1 + exp(-2 * m._matrix[i][j]));
+      }
+    }
+    return tM;
+  }
+  matrix operator+(const matrix &x)
+  {
+    if (this->_numColumns != x._numColumns || this->_numRows != x._numRows)
+    {
+      throw new MatrixException("The matrices are of different dimensions");
+    }
+    matrix m;
+    m._numRows = x._numRows;
+    m._numColumns = x._numColumns;
+    m._matrix = new double *[x._numRows];
+
+    for (size_t i = 0; i < x._numRows; i++)
+    {
+      m._matrix[i] = new double[x._numColumns];
+      for (size_t j = 0; j < x._numColumns; j++)
+      {
+        m._matrix[i][j] = this->_matrix[i][j] + x._matrix[i][j];
+      }
+    }
+    return m;
+  }
+  matrix operator*(const matrix &x)
+  {
+    if (this->_numColumns != x._numRows)
+    {
+      throw new MatrixException("The number of columns of the first matrix is different from the number of lines of the second");
+    }
+    matrix p = *this;
+    p._numColumns = x._numColumns;
+    p._matrix = new double *[this->_numRows];
+    for (size_t i = 0; i < this->_numRows; i++)
+    {
+      p._matrix[i] = new double[x._numColumns];
+      for (size_t j = 0; j < x._numColumns; j++)
+      {
+        p._matrix[i][j] = 0;
+        for (size_t k = 0; k < x._numRows; k++)
+        {
+          p._matrix[i][j] += this->_matrix[i][k] * x._matrix[k][j];
+        }
+      }
+    }
+    return p;
+  }
+  double *operator[](int x)
+  {
+    return _matrix[x];
+  }
+  template <typename T, std::size_t N, std::size_t M>
+  matrix(T (&a)[N][M])
+  {
+    _numRows = N;
+    _numColumns = M;
+    _matrix = new double *[_numRows];
+    for (unsigned int i = 0; i < _numRows; i++)
+    {
+      _matrix[i] = new double[_numColumns];
+      for (unsigned int j = 0; j < _numColumns; j++)
+      {
+        _matrix[i][j] = a[i][j];
       }
     }
   }
-  return p;
-}
-matrix::matrix(std::initializer_list<std::initializer_list<double>> j)
-{
-  _numRows = j.size();
-  _numColumns = 0;
-  if (_numRows > 0)
+  matrix(std::initializer_list<std::initializer_list<double>> j)
   {
-    _numColumns = j.begin()->size();
-  }
-  size_t counterR = 0;
-  _matrix = new double *[_numRows];
-  for (auto &row : j)
-  {
-    _matrix[counterR] = new double[_numColumns];
-    size_t counterC = 0;
-    for (auto &collumn : row)
+    _numRows = j.size();
+    _numColumns = 0;
+    if (_numRows > 0)
     {
-      _matrix[counterR][counterC++] = collumn;
+      _numColumns = j.begin()->size();
     }
-    counterR++;
-  }
-}
-template <typename T, std::size_t N, std::size_t M>
-matrix::matrix(T (&a)[N][M])
-{
-  _numRows = N;
-  _numColumns = M;
-  _matrix = new double *[_numRows];
-  for (unsigned int i = 0; i < _numRows; i++)
-  {
-    _matrix[i] = new double[_numColumns];
-    for (unsigned int j = 0; j < _numColumns; j++)
+    size_t counterR = 0;
+    _matrix = new double *[_numRows];
+    for (auto &row : j)
     {
-      _matrix[i][j] = a[i][j];
+      _matrix[counterR] = new double[_numColumns];
+      size_t counterC = 0;
+      for (auto &collumn : row)
+      {
+        _matrix[counterR][counterC++] = collumn;
+      }
+      counterR++;
     }
   }
-}
-
-matrix::~matrix()
-{
-  // free the allocated memory
-  for (int i = 0; i < _numRows; i++)
+  matrix()
   {
-    delete[] _matrix[i];
+    _matrix = 0;
+    _numColumns = 0;
+    _numRows = 0;
   }
-  delete[] _matrix;
-}
-void matrix::show()
-{
-
-  for (unsigned int i = 0; i < _numRows; i++)
+  ~matrix()
   {
-    std::cout << "[ ";
-    for (unsigned int j = 0; j < _numColumns; j++)
+    // free the allocated memory
+    for (int i = 0; i < _numRows; i++)
     {
-      std::cout << _matrix[i][j] << " ";
+      delete[] _matrix[i];
     }
-    std::cout << "]" << std::endl;
+    delete[] _matrix;
   }
-}
+};
 #endif // MATRIX_HH
