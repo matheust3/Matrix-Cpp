@@ -13,7 +13,6 @@ int main(int argc, char const *argv[])
     std::cout << " n=\n";
     n.show();
     n = m;
-
     std::cout << " n=\n";
     n.show();
     matrix o = {{1, 2}, {2, 1}, {1, 1}};
@@ -27,5 +26,6 @@ int main(int argc, char const *argv[])
     matrix p = m * n;
     std::cout << " p=\n";
     p.show();
+    std::cout << p[1][2] << std::endl;
     return 0;
 }
