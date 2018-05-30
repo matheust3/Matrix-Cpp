@@ -31,6 +31,14 @@ private:
   double **_matrix;
 
 public:
+  unsigned int getNumRows()
+  {
+    return _numRows;
+  }
+  unsigned int getNumColumns()
+  {
+    return _numColumns;
+  }
   void show()
   {
 
