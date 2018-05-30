@@ -5,6 +5,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <exception>
+#include <math.h>
 
 class MatrixException : public std::exception
 {
@@ -42,6 +43,22 @@ public:
       }
       std::cout << "]" << std::endl;
     }
+  }
+  matrix static TanH(const matrix &m)
+  {
+    matrix tM;
+    tM._numRows = m._numRows, tM._numColumns = m._numColumns;
+    tM._matrix = new double *[m._numRows];
+
+    for (size_t i = 0; i < m._numRows; i++)
+    {
+      tM._matrix[i] = new double[m._numColumns];
+      for (size_t j = 0; j < m._numColumns; j++)
+      {
+        tM._matrix[i][j] = (1 - exp(-2 * m._matrix[i][j])) / (1 + exp(-2 * m._matrix[i][j]));
+      }
+    }
+    return tM;
   }
   matrix operator+(const matrix &x)
   {

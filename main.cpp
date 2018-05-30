@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
     n.show();
     std::cout << " o=\n";
     o.show();
-    matrix p = m + m;
+    matrix p = matrix::TanH(m);
     std::cout << " p=\n";
     p.show();
     std::cout << p[1][2] << std::endl;
