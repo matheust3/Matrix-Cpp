@@ -43,6 +43,27 @@ public:
       std::cout << "]" << std::endl;
     }
   }
+  matrix operator+(const matrix &x)
+  {
+    if (this->_numColumns != x._numColumns || this->_numRows != x._numRows)
+    {
+      throw new MatrixException("The matrices are of different dimensions");
+    }
+    matrix m;
+    m._numRows = x._numRows;
+    m._numColumns = x._numColumns;
+    m._matrix = new double *[x._numRows];
+
+    for (size_t i = 0; i < x._numRows; i++)
+    {
+      m._matrix[i] = new double[x._numColumns];
+      for (size_t j = 0; j < x._numColumns; j++)
+      {
+        m._matrix[i][j] = this->_matrix[i][j] + x._matrix[i][j];
+      }
+    }
+    return m;
+  }
   matrix operator*(const matrix &x)
   {
     if (this->_numColumns != x._numRows)
@@ -105,6 +126,12 @@ public:
       }
       counterR++;
     }
+  }
+  matrix()
+  {
+    _matrix = 0;
+    _numColumns = 0;
+    _numRows = 0;
   }
   ~matrix()
   {
