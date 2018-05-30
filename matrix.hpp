@@ -68,7 +68,7 @@ public:
     }
     return tM;
   }
-  void operator=(matrix &y)
+  matrix &operator=(const matrix &y)
   {
     this->~matrix();
     this->_matrix = new double *[y._numRows];
@@ -82,6 +82,7 @@ public:
         this->_matrix[i][j] = y._matrix[i][j];
       }
     }
+    return *this;
   }
   matrix operator+(const matrix &x)
   {
@@ -110,8 +111,8 @@ public:
     {
       throw new MatrixException("The number of columns of the first matrix is different from the number of lines of the second");
     }
-    matrix p = *this;
-    p._numColumns = x._numColumns;
+    matrix p;
+    p._numRows = this->_numRows, p._numColumns = x._numColumns;
     p._matrix = new double *[this->_numRows];
     for (size_t i = 0; i < this->_numRows; i++)
     {
@@ -172,6 +173,21 @@ public:
     _matrix = 0;
     _numColumns = 0;
     _numRows = 0;
+  }
+  matrix(size_t i, size_t j)
+  {
+    _numColumns = j;
+    _numRows = i;
+    _matrix = new double *[i];
+    for (size_t k = 0; k < i; k++)
+    {
+      _matrix[k] = new double[j];
+
+      for (size_t l = 0; l < j; l++)
+      {
+        _matrix[k][l] = 0;
+      }
+    }
   }
   ~matrix()
   {
