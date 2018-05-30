@@ -68,6 +68,21 @@ public:
     }
     return tM;
   }
+  void operator=(matrix &y)
+  {
+    this->~matrix();
+    this->_matrix = new double *[y._numRows];
+    this->_numRows = y._numRows, this->_numColumns = y._numColumns;
+
+    for (size_t i = 0; i < y._numRows; i++)
+    {
+      this->_matrix[i] = new double[y._numColumns];
+      for (size_t j = 0; j < y._numColumns; j++)
+      {
+        this->_matrix[i][j] = y._matrix[i][j];
+      }
+    }
+  }
   matrix operator+(const matrix &x)
   {
     if (this->_numColumns != x._numColumns || this->_numRows != x._numRows)
