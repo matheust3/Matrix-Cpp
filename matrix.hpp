@@ -31,6 +31,14 @@ private:
   double **_matrix;
 
 public:
+  unsigned int getNumRows()
+  {
+    return _numRows;
+  }
+  unsigned int getNumColumns()
+  {
+    return _numColumns;
+  }
   void show()
   {
 
@@ -60,6 +68,23 @@ public:
     }
     return tM;
   }
+
+  matrix &operator=(const matrix &y)
+  {
+    this->~matrix();
+    this->_matrix = new double *[y._numRows];
+    this->_numRows = y._numRows, this->_numColumns = y._numColumns;
+
+    for (size_t i = 0; i < y._numRows; i++)
+    {
+      this->_matrix[i] = new double[y._numColumns];
+      for (size_t j = 0; j < y._numColumns; j++)
+      {
+        this->_matrix[i][j] = y._matrix[i][j];
+      }
+    }
+    return *this;
+  }
   matrix operator+(const matrix &x)
   {
     if (this->_numColumns != x._numColumns || this->_numRows != x._numRows)
@@ -87,8 +112,8 @@ public:
     {
       throw new MatrixException("The number of columns of the first matrix is different from the number of lines of the second");
     }
-    matrix p = *this;
-    p._numColumns = x._numColumns;
+    matrix p;
+    p._numRows = this->_numRows, p._numColumns = x._numColumns;
     p._matrix = new double *[this->_numRows];
     for (size_t i = 0; i < this->_numRows; i++)
     {
@@ -149,6 +174,36 @@ public:
     _matrix = 0;
     _numColumns = 0;
     _numRows = 0;
+  }
+  matrix(size_t i, size_t j)
+  {
+    _numColumns = j;
+    _numRows = i;
+    _matrix = new double *[i];
+    for (size_t k = 0; k < i; k++)
+    {
+      _matrix[k] = new double[j];
+
+      for (size_t l = 0; l < j; l++)
+      {
+        _matrix[k][l] = 0;
+      }
+    }
+  }
+  matrix(const matrix &m)
+  {
+    _numColumns = m._numColumns, _numRows = m._numRows;
+    _matrix = new double *[m._numRows];
+
+    for (size_t i = 0; i < m._numRows; i++)
+    {
+      _matrix[i] = new double[m._numColumns];
+
+      for (size_t j = 0; j < m._numColumns; j++)
+      {
+        _matrix[i][j] = m._matrix[i][j];
+      }
+    }
   }
   ~matrix()
   {
