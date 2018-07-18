@@ -69,7 +69,7 @@ public:
     }
     return tM;
   }
-  friend bool &operator==(const Matrix &y, const Matrix &x)
+  friend bool operator==(const Matrix &y, const Matrix &x)
   {
     if (y._numColumns == x._numColumns && x._numRows == y._numRows)
     {
