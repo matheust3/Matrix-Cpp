@@ -77,7 +77,7 @@ public:
       for (size_t i = 0; i < x._numRows; i++)
       {
         //Para cada collumn
-        for (size_t j = 0; j < x._numColumns; k++)
+        for (size_t j = 0; j < x._numColumns; j++)
         {
           if (x._matrix[i][j] != y._matrix[i][j])
           {
