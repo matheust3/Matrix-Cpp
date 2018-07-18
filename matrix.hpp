@@ -23,7 +23,7 @@ private:
   const char *_s;
 };
 
-class matrix
+class Matrix
 {
 private:
   unsigned int _numRows;
@@ -52,9 +52,9 @@ public:
       std::cout << "]" << std::endl;
     }
   }
-  matrix static TanH(const matrix &m)
+  Matrix static TanH(const Matrix &m)
   {
-    matrix tM;
+    Matrix tM;
     tM._numRows = m._numRows, tM._numColumns = m._numColumns;
     tM._matrix = new double *[m._numRows];
 
@@ -64,14 +64,38 @@ public:
       for (size_t j = 0; j < m._numColumns; j++)
       {
         tM._matrix[i][j] = (1 - exp(-2 * m._matrix[i][j])) / (1 + exp(-2 * m._matrix[i][j]));
+        //tM._matrix[i][j] = (1 / (1 + exp(-m._matrix[i][j]))); --> Sigmod
       }
     }
     return tM;
   }
-
-  matrix &operator=(const matrix &y)
+  friend bool &operator==(const Matrix &y, const Matrix &x)
   {
-    this->~matrix();
+    if (y._numColumns == x._numColumns && x._numRows == y._numRows)
+    {
+      //Para cada linha
+      for (size_t i = 0; i < x._numRows; i++)
+      {
+        //Para cada collumn
+        for (size_t j = 0; j < count; k++)
+        {
+          if (x._matrix[i][j] != y._matrix[i][j])
+          {
+            return false;
+          }
+        }
+      }
+      //Se não retornou false é igual
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  Matrix &operator=(const Matrix &y)
+  {
+    this->~Matrix();
     this->_matrix = new double *[y._numRows];
     this->_numRows = y._numRows, this->_numColumns = y._numColumns;
 
@@ -85,13 +109,13 @@ public:
     }
     return *this;
   }
-  matrix operator+(const matrix &x)
+  Matrix operator+(const Matrix &x)
   {
     if (this->_numColumns != x._numColumns || this->_numRows != x._numRows)
     {
       throw new MatrixException("The matrices are of different dimensions");
     }
-    matrix m;
+    Matrix m;
     m._numRows = x._numRows;
     m._numColumns = x._numColumns;
     m._matrix = new double *[x._numRows];
@@ -106,13 +130,13 @@ public:
     }
     return m;
   }
-  matrix operator*(const matrix &x)
+  Matrix operator*(const Matrix &x)
   {
     if (this->_numColumns != x._numRows)
     {
       throw new MatrixException("The number of columns of the first matrix is different from the number of lines of the second");
     }
-    matrix p;
+    Matrix p;
     p._numRows = this->_numRows, p._numColumns = x._numColumns;
     p._matrix = new double *[this->_numRows];
     for (size_t i = 0; i < this->_numRows; i++)
@@ -134,7 +158,7 @@ public:
     return _matrix[x];
   }
   template <typename T, std::size_t N, std::size_t M>
-  matrix(T (&a)[N][M])
+  Matrix(T (&a)[N][M])
   {
     _numRows = N;
     _numColumns = M;
@@ -148,7 +172,7 @@ public:
       }
     }
   }
-  matrix(std::initializer_list<std::initializer_list<double>> j)
+  Matrix(std::initializer_list<std::initializer_list<double>> j)
   {
     _numRows = j.size();
     _numColumns = 0;
@@ -169,13 +193,13 @@ public:
       counterR++;
     }
   }
-  matrix()
+  Matrix()
   {
     _matrix = 0;
     _numColumns = 0;
     _numRows = 0;
   }
-  matrix(size_t i, size_t j)
+  Matrix(size_t i, size_t j)
   {
     _numColumns = j;
     _numRows = i;
@@ -186,11 +210,11 @@ public:
 
       for (size_t l = 0; l < j; l++)
       {
-        _matrix[k][l] = 0;
+        _matrix[k][l] = 1;
       }
     }
   }
-  matrix(const matrix &m)
+  Matrix(const Matrix &m)
   {
     _numColumns = m._numColumns, _numRows = m._numRows;
     _matrix = new double *[m._numRows];
@@ -205,7 +229,7 @@ public:
       }
     }
   }
-  ~matrix()
+  ~Matrix()
   {
     // free the allocated memory
     for (int i = 0; i < _numRows; i++)
